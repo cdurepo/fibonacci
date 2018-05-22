@@ -1,0 +1,16 @@
+FROM centos:7
+
+#Install packages
+
+#Set root password
+RUN echo "root:password" |chpasswd
+
+#Create user
+RUN useradd -m user
+
+
+# User specific settings
+USER user
+WORKDIR /home/user
+
+
