@@ -23,10 +23,7 @@ def populate_fib_array ():
 def create_output (length, fib_array):
     #This is the function that will walk the array and return the array
     #for the given position
-    output=fib_array[0:length]
-    #print "output",output
-    #print "json",json.dumps(output, separators=(',',':'))
-    return output
+    return fib_array[0:length]
 
 print "starting service"
 fib_array=populate_fib_array()
@@ -35,8 +32,12 @@ print "Done filling array"
 
 #Building the webservice app
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
+
 @app.route("/")
 def hello_world():
     length = int(request.args.get('fib'))
-    print "length:",length
-    return  jsonify(create_output(length, fib_array))
+    if (length > 0):
+        return  jsonify(response="success",output=create_output(length, fib_array))
+    else:
+        return "There was an error"
