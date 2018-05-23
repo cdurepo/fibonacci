@@ -5,6 +5,15 @@ FROM centos:7
 #Set root password
 RUN echo "root:password" |chpasswd
 
+#install PIP
+RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+RUN python get-pip.py
+#Install flask
+RUN pip install flask django djangorestframework
+#Install redis
+RUN yum -y install epel-release
+RUN yum -y install python-redis
+
 #Create user
 RUN useradd -m user
 
