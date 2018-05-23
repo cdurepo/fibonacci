@@ -16,7 +16,7 @@ max_redis=10000
 #Connect to redis
 
 rdb = redis.Redis(
-    host='172.18.0.2',
+    host='redis',
     port="6379"
 )
 print "testing rdb"

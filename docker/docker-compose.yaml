@@ -15,17 +15,27 @@ services:
       - redis-net
     depends_on:
       - redis
+      - redis-slave
 
   redis:
     image: redis:4.0.5-alpine
-    command: ["redis-server", "--appendonly", "yes"]
+    command: sh -c "redis-server /src/redis.conf --port 7000 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000"
     hostname: redis
     networks:
       - redis-net
     volumes:
       - ./redis_data:/redis_data
 
+  redis-slave:
+    image: redis:4.0.5-alpine
+    command: ["redis-server", "--cluster-enabled", "yes", "port", "7002", "--cluster-config-file", "nodes.conf"]
+    hostname: redis-slave
+    networks:
+      - redis-net
+    volumes:
+      - ./redis_data:/redis_data
+
+
 
 networks:
   redis-net:
-
