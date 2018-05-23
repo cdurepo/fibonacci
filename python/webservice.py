@@ -23,6 +23,9 @@ print "testing rdb"
 rdb.set('test', 'pass')
 value = rdb.get('test')
 print "Value:",value
+value = rdb.get(1001)
+print "1001:",value
+
 
 # Function to fill array
 def populate_fib_array ():
@@ -62,9 +65,7 @@ fib_array=populate_fib_array()
 print "Done filling array"
 #print "10:",create_output(10000, fib_array)
 print "Start filling redis"
-fib_one=fib_array[-2]
-fib_two=fib_array[-1]
-populate_fib_redis(fib_one, fib_two)
+populate_fib_redis(fib_array[-2], fib_array[-1])
 print "redis populated"
 
 #Building the webservice app
@@ -73,8 +74,15 @@ app.config['JSON_SORT_KEYS'] = False
 
 @app.route("/")
 def hello_world():
-    length = int(request.args.get('fib'))
+    try:
+         length = int(request.args.get('fib'))
+    except:
+        return jsonify(response="error", message="invalid reqeust, reqeust must be an integer")
+
     if (length > 0):
-        return  jsonify(response="success",output=create_output(length, fib_array))
+        if ((length <= max_array) or ((length > max_array) and (rdb.exists(length)))):
+            return  jsonify(response="success",output=create_output(length, fib_array))
+        else:
+                return jsonify(response="error", message="Not calculated yet please try again later")
     else:
-        return jsonify(response="error",message="invalid reqeust")
+            return jsonify(response="error",message="invalid reqeust")
