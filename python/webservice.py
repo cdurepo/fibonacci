@@ -28,7 +28,7 @@ print "Value:",value
 def populate_fib_array ():
     print "Populating array"
     count=2
-    fib_array=[1,1]
+    fib_array=[0,1]
     while count < max_array:
         fib_array.append(fib_array[count-2]+fib_array[count-1])
         #print "fib array count is:",fib_array[count]
@@ -49,7 +49,13 @@ def populate_fib_redis (fib_one, fib_two):
 def create_output (length, fib_array):
     #This is the function that will walk the array and return the array
     #for the given position
-    return fib_array[0:length]
+    if length <= max_array:
+        fib_output=fib_array[0:length]
+    else:
+        print "range",range(max_array+1,length+1,1)
+        fib_output=fib_array
+        fib_output.extend(rdb.mget(range(max_array+1,length+1,1)))
+    return fib_output
 
 print "starting service"
 fib_array=populate_fib_array()
@@ -58,14 +64,9 @@ print "Done filling array"
 print "Start filling redis"
 fib_one=fib_array[-2]
 fib_two=fib_array[-1]
-print fib_array[-1]
-print fib_array[-2]
-orig=fib_array[-1]+fib_array[-2]
-print "should be:",orig
 populate_fib_redis(fib_one, fib_two)
-print "verify"
-verify=rdb.get(1001)
-print "fib(1001)",verify
+print "redis populated"
+
 #Building the webservice app
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
