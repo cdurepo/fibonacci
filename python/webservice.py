@@ -6,6 +6,7 @@
 #######################
 import json
 import redis
+import threading
 from flask import Flask
 from flask import request
 from flask import jsonify
@@ -17,13 +18,17 @@ max_array=1000
 max_redis=10000
 #Connect to redis
 
-#rdb = redis.Redis(
-#    host='docker_redis-cluster_1',
-#    port="6379"
-#)
+rdb = redis.Redis(
+   host='master',
+   port="6379"
+)
 
-startup_nodes =[{"host": "172.18.0.8", "port": 6379}]
-rdb = StrictRedisCluster(startup_nodes=startup_nodes, decode_responses=True)
+# startup_nodes =[{"host": "172.18.0.4", "port": 6379},
+#                 {"host": "172.18.0.8", "port": 6379},
+#                 {"host": "172.18.0.7", "port": 6379},
+#                 {"host": "172.18.0.5", "port": 6379},
+#                 {"host": "172.18.0.6", "port": 6379}]
+# rdb = StrictRedisCluster(startup_nodes=startup_nodes, decode_responses=True)
 
 print "testing rdb"
 rdb.set('test', 'pass')
@@ -65,13 +70,16 @@ def create_output (length, fib_array):
         fib_output=fib_array
         fib_output.extend(rdb.mget(range(max_array+1,length+1,1)))
     return fib_output
-
+########### Main #################
 print "starting service"
 fib_array=populate_fib_array()
 print "Done filling array"
 #print "10:",create_output(10000, fib_array)
 print "Start filling redis"
-populate_fib_redis(fib_array[-2], fib_array[-1])
+# Background redis population
+fill_redis_thread = thread = threading.Thread(target=populate_fib_redis, args=(fib_array[-2], fib_array[-1]))
+fill_redis_thread.start()
+#populate_fib_redis(fib_array[-2], fib_array[-1])
 print "redis populated"
 
 #Building the webservice app
@@ -89,6 +97,6 @@ def hello_world():
         if ((length <= max_array) or ((length > max_array) and (rdb.exists(length)))):
             return  jsonify(response="success",output=create_output(length, fib_array))
         else:
-                return jsonify(response="error", message="Not calculated yet please try again later")
+            return jsonify(response="error", message="Not calculated yet please try again later")
     else:
             return jsonify(response="error",message="invalid reqeust")
