@@ -9,16 +9,22 @@ import redis
 from flask import Flask
 from flask import request
 from flask import jsonify
+from rediscluster import StrictRedisCluster
+
 
 ### Setup
 max_array=1000
 max_redis=10000
 #Connect to redis
 
-rdb = redis.Redis(
-    host='redis',
-    port="6379"
-)
+#rdb = redis.Redis(
+#    host='docker_redis-cluster_1',
+#    port="6379"
+#)
+
+startup_nodes =[{"host": "172.18.0.8", "port": 6379}]
+rdb = StrictRedisCluster(startup_nodes=startup_nodes, decode_responses=True)
+
 print "testing rdb"
 rdb.set('test', 'pass')
 value = rdb.get('test')

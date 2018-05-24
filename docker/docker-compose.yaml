@@ -15,7 +15,6 @@ services:
       - redis-net
     depends_on:
       - redis
-      - redis-slave
 
   redis:
     image: redis:4.0.5-alpine
@@ -26,14 +25,19 @@ services:
     volumes:
       - ./redis_data:/redis_data
 
-  redis-slave:
+  redis-cluster:
     image: redis:4.0.5-alpine
-    command: ["redis-server", "--cluster-enabled", "yes", "port", "7002", "--cluster-config-file", "nodes.conf"]
-    hostname: redis-slave
+    #build: ./redis
+    command: --cluster-enabled yes --bind 0.0.0.0
+    ports:
+      - 6379
+      - 16379
+    labels:
+      - redis-cluster
+    #depends_on:
+    #  - discover
     networks:
       - redis-net
-    volumes:
-      - ./redis_data:/redis_data
 
 
 

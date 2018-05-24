@@ -12,11 +12,12 @@ RUN python get-pip.py
 RUN pip install flask django djangorestframework
 #Install redis
 RUN yum -y install epel-release
-RUN yum -y install redis python-redis
+RUN yum -y install redis python-redis ruby rubygem-redis bind-utils wget redis-py-cluster
 
 #Create user
 RUN useradd -m user
 
+RUN cd /home/user; wget "https://raw.githubusercontent.com/antirez/redis/3.2.11/src/redis-trib.rb"
 
 # User specific settings
 USER user
