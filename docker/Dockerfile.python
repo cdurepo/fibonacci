@@ -11,7 +11,7 @@ RUN python get-pip.py
 #Install flask
 RUN pip install flask django djangorestframework
 #Install redis
-RUN yum -y install epel-release
+RUN yum -y install epel-release less
 RUN yum -y install redis python-redis ruby rubygem-redis bind-utils wget redis-py-cluster
 
 #Create user
@@ -24,5 +24,3 @@ RUN pip install redis-py-cluster
 # User specific settings
 USER user
 WORKDIR /home/user
-
-

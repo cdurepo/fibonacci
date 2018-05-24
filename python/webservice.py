@@ -15,20 +15,13 @@ from rediscluster import StrictRedisCluster
 
 ### Setup
 max_array=1000
-max_redis=10000
+max_redis=50000
 #Connect to redis
 
 rdb = redis.Redis(
    host='master',
    port="6379"
 )
-
-# startup_nodes =[{"host": "172.18.0.4", "port": 6379},
-#                 {"host": "172.18.0.8", "port": 6379},
-#                 {"host": "172.18.0.7", "port": 6379},
-#                 {"host": "172.18.0.5", "port": 6379},
-#                 {"host": "172.18.0.6", "port": 6379}]
-# rdb = StrictRedisCluster(startup_nodes=startup_nodes, decode_responses=True)
 
 print "testing rdb"
 rdb.set('test', 'pass')
@@ -66,10 +59,12 @@ def create_output (length, fib_array):
     if length <= max_array:
         fib_output=fib_array[0:length]
     else:
-        print "range",range(max_array+1,length+1,1)
+        #print "range",range(max_array+1,length+1,1)
         fib_output=fib_array
         fib_output.extend(rdb.mget(range(max_array+1,length+1,1)))
     return fib_output
+
+
 ########### Main #################
 print "starting service"
 fib_array=populate_fib_array()
