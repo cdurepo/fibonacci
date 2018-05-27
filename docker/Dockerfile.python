@@ -17,6 +17,10 @@ RUN yum -y install redis python-redis ruby rubygem-redis bind-utils wget redis-p
 #Create user
 RUN useradd -m user
 
+#Create Data dir
+RUN mkdir /var/data
+RUN chown user:user /var/data
+
 RUN cd /home/user; wget "https://raw.githubusercontent.com/antirez/redis/3.2.11/src/redis-trib.rb"
 RUN cd /home/user; chown user:user redis-trib.rb; chmod u+x redis-trib.rb
 RUN pip install redis-py-cluster
