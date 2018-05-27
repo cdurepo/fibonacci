@@ -7,15 +7,22 @@
 import json
 import redis
 import threading
+import os
 from flask import Flask
 from flask import request
 from flask import jsonify
 from rediscluster import StrictRedisCluster
 
 
+file_name="/var/data/fib"
+os.remove(file_name)
+fib_file=open(file_name, 'a')
+fib_read=open(file_name, 'r')
+file_index=0
+
 ### Setup
 max_array=1000
-max_redis=50000
+max_redis=2000
 #Connect to redis
 
 rdb = redis.Redis(
@@ -33,14 +40,35 @@ print "1001:",value
 
 # Function to fill array
 def populate_fib_array ():
+    # Changing to file
     print "Populating array"
-    count=2
-    fib_array=[0,1]
+    count=1
+    first=0
+    second=1
+    #Bootstrap sequence
+    file_index=fib_file.write(str(first))
+    rdb.set('index_'+str(count),fib_file.tell())
+    file_index=fib_file.write(','+str(second))
+    count+=1
+    rdb.set('index_'+str(count),fib_file.tell())
+    count+=1
     while count < max_array:
-        fib_array.append(fib_array[count-2]+fib_array[count-1])
+        third=first+second
+        print "thrid: ",third
+        current=fib_file.tell()
+        fib_file.write((','+str(third)))
+
+        rdb.set('index_'+str(count),fib_file.tell())
+        print "index_"+str(count)," ",rdb.get('index_'+str(count))
+        first=second
+        second=third
+        fib_file.flush()
+        fib_read.seek(0)
+        #print "file count: ",fib_read.read()
+        #fib_array.append(fib_array[count-2]+fib_array[count-1])
         #print "fib array count is:",fib_array[count]
         count+=1
-    return fib_array
+    return
 
 def populate_fib_redis (fib_one, fib_two):
     print "Populating redis"
@@ -57,7 +85,10 @@ def create_output (length, fib_array):
     #This is the function that will walk the array and return the array
     #for the given position
     if length <= max_array:
-        fib_output=fib_array[0:length]
+        fib_read.seek(0)
+        print "rdb output",rdb.get('index_'+str(length))
+        fib_output=fib_read.read(int(rdb.get('index_'+str(length))))
+        print "fib_output:",fib_output
     else:
         #print "range",range(max_array+1,length+1,1)
         fib_output=fib_array
@@ -72,8 +103,8 @@ print "Done filling array"
 #print "10:",create_output(10000, fib_array)
 print "Start filling redis"
 # Background redis population
-fill_redis_thread = thread = threading.Thread(target=populate_fib_redis, args=(fib_array[-2], fib_array[-1]))
-fill_redis_thread.start()
+##fill_redis_thread = thread = threading.Thread(target=populate_fib_redis, args=(fib_array[-2], fib_array[-1]))
+##fill_redis_thread.start()
 #populate_fib_redis(fib_array[-2], fib_array[-1])
 print "redis populated"
 
