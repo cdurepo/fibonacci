@@ -67,25 +67,6 @@ def populate_fib_array ():
     fib_file.flush()
     return
 
-def populate_fib_redis ():
-    print "Populating redis"
-    count=1
-    redis_high=0
-    rdb.set('count','0')
-    count+=1
-    rdb.set('count','1')
-    count+=1
-    fib_one=0
-    fib_two=1
-    while count <= max_redis:
-        value=fib_one+fib_two
-        rdb.set(count,value)
-        rdb.set('redis_high',count)
-        count+=1
-
-        fib_one=fib_two
-        fib_two=value
-    return
 
 def create_output (length):
     #This is the function that will walk the array and return the array
@@ -116,14 +97,6 @@ def create_output (length):
 print "starting service"
 fib_array=populate_fib_array()
 print "Done filling array"
-#print "10:",create_output(10000, fib_array)
-print "Start filling redis"
-# Background redis population
-fill_redis_thread = thread = threading.Thread(target=populate_fib_redis)
-fill_redis_thread.start()
-#populate_fib_redis(fib_array[-2], fib_array[-1])
-print "redis populated"
-create_output(1)
 
 #Building the webservice app
 app = Flask(__name__)
