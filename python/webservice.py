@@ -8,10 +8,14 @@ import json
 import redis
 import threading
 import os
+import tornado.escape
+import tornado.ioloop
+import tornado.web
 from flask import Flask
 from flask import request
 from flask import jsonify
 from rediscluster import StrictRedisCluster
+
 
 
 file_name="/var/data/fib"
@@ -24,6 +28,7 @@ file_index=0
 local_high=10
 max_array=10
 max_redis=20
+message="test"
 #Connect to redis
 
 rdb = redis.Redis(
@@ -79,8 +84,7 @@ def create_output (length):
     else:
         # If the length is more than we have in the cache file_name
         # We need to update the cache file and then return the whole thing.
-        while (local_high <= length):
-            print "should be writing file"
+        while (local_high < length):
             fib_file.write((','+rdb.get(local_high+1)))
             rdb.set('index_'+str(local_high+1),fib_file.tell())
             local_high+=1
@@ -90,7 +94,8 @@ def create_output (length):
         fib_output=fib_read.read(int(rdb.get('index_'+str(length))))
         #fib_output=fib_read.read()
         #fib_output.extend(rdb.mget(range(max_array+1,length+1,1)))
-    return fib_output
+    message=fib_output
+    return
 
 
 ########### Main #################
@@ -99,13 +104,13 @@ fib_array=populate_fib_array()
 print "Done filling array"
 
 #Building the webservice app
-app = Flask(__name__)
-app.config['JSON_SORT_KEYS'] = False
-
-@app.route("/")
-def hello_world():
+# app = Flask(__name__)
+# app.config['JSON_SORT_KEYS'] = False
+#
+# @app.route("/")
+def hello_world(length):
     try:
-         length = int(request.args.get('fib'))
+         length = int(length)
     except:
         return jsonify(response="error", message="invalid reqeust, reqeust must be an integer")
 
@@ -117,3 +122,17 @@ def hello_world():
             return jsonify(response="error", message="Not calculated yet please try again later")
     else:
             return jsonify(response="error",message="invalid reqeust")
+
+
+class get_fib(tornado.web.RequestHandler):
+    def get(self, id):
+        hello_world(id)
+        self.write(message)
+
+application = tornado.web.Application([
+    (r"/fib/([0-9]+)",get_fib)
+])
+
+if __name__ == "__main__":
+    application.listen(8000)
+    tornado.ioloop.IOLoop.instance().start()

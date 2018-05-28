@@ -14,30 +14,21 @@ services:
     networks:
       - redis-net
 
+  websrvr:
+    image: websrvr/devel:latest
+    command: []
+    hostname: websrvr
+    volumes:
+      - ./../:/localDir/:consistent
+    environment:
+      - NODE_ENV=production
+      - RHOST=redis
+    ports:
+      - 1235:3000
+    networks:
+      - redis-net
 
 
-  # redis:
-  #   image: redis:4.0.5-alpine
-  #   command: sh -c "redis-server /src/redis.conf --port 7000 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000"
-  #   hostname: redis
-  #   networks:
-  #     - redis-net
-  #   volumes:
-  #     - ./redis_data:/redis_data
-  #
-  # redis-cluster:
-  #   image: redis:3
-  #   #build: ./redis
-  #   command: --cluster-enabled yes --bind 0.0.0.0
-  #   ports:
-  #     - 6379
-  #     - 16379
-  #   labels:
-  #     - redis-cluster
-  #   #depends_on:
-  #   #  - discover
-  #   networks:
-  #     - redis-net
 
   master:
     image: redis:3
