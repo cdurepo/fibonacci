@@ -171,8 +171,10 @@ class get_fib(tornado.web.RequestHandler):
             print "before read"
             index=rdb.get('index_'+str(length))
             print "index:",index
-            temp = yield fib_read.read(index)
-            print "temp:",temp
+            print "filename",file_name
+            fh = open(file_name, 'rb')
+            lists = fd.read(length)
+            print "temp:",lists
             fib_output=yield fib_read.read(index)
             print "after read"
             yield fib_output
