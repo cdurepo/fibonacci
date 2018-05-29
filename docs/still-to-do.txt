@@ -1,0 +1,12 @@
+Clean up extra print statements
+have the redis population script check to see what is already in redis
+build test server with script for testing
+build shared config file so that servers have correct arrays when they start
+create docs to run full setup and testing
+Walkthrough entire doc to verify it works
+remove extra packages from build that are not needed
+
+
+
+############### If there is time
+Build rpms
