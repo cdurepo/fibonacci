@@ -1,0 +1,23 @@
+FROM centos:7
+
+#Install packages
+
+#Set root password
+RUN echo "root:password" |chpasswd
+
+#install packages
+RUN yum -y install epel-release less
+RUN yum -y install redis python-redis bind-utils wget python-configparser
+
+#Create user
+RUN useradd -m user
+
+#Create Data dir
+RUN mkdir /var/data
+RUN chown user:user /var/data
+
+# User specific settings
+USER user
+WORKDIR /home/user
+
+CMD cd /localDir/python && ./populate_redis.py & /bin/bash
