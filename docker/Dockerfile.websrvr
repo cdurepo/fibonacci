@@ -1,0 +1,33 @@
+FROM centos:7
+
+#Install packages
+
+#Set root password
+RUN echo "root:password" |chpasswd
+
+#install PIP
+RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+RUN python get-pip.py
+#Install flask
+RUN pip install flask gunicorn
+#Install redis
+RUN yum -y install epel-release less
+RUN yum -y install redis python-redis ruby rubygem-redis bind-utils wget redis-py-cluster
+
+#Create user
+RUN useradd -m user
+
+#Create Data dir
+RUN mkdir /var/data
+RUN chown user:user /var/data
+
+RUN cd /home/user; wget "https://raw.githubusercontent.com/antirez/redis/3.2.11/src/redis-trib.rb"
+RUN cd /home/user; chown user:user redis-trib.rb; chmod u+x redis-trib.rb
+RUN pip install redis-py-cluster
+
+# User specific settings
+USER user
+WORKDIR /home/user
+
+#CMD export FLASK_APP=/localDir/python/webservice.py
+CMD cd /localDir/python/ && gunicorn -b 0.0.0.0 -w 4 webservice:app & /bin/bash

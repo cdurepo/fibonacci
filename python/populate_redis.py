@@ -14,7 +14,7 @@ from flask import jsonify
 from rediscluster import StrictRedisCluster
 
 
-max_redis=2000
+max_redis=20
 #Connect to redis
 
 rdb = redis.Redis(
@@ -22,12 +22,12 @@ rdb = redis.Redis(
    port="6379"
 )
 
-#print "testing rdb"
-#rdb.set('test', 'pass')
-#value = rdb.get('test')
-#print "Value:",value
-#value = rdb.get(1001)
-#print "1001:",value
+print "testing rdb"
+rdb.set('test', 'pass')
+value = rdb.get('test')
+print "Value:",value
+value = rdb.get(1001)
+print "1001:",value
 
 
 def populate_fib_redis ():
