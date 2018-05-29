@@ -7,12 +7,14 @@
 import json
 import redis
 import threading
-import os
+import configparser
 from flask import Flask
 from flask import request
 from flask import jsonify
-from rediscluster import StrictRedisCluster
 
+config =  configparser.ConfigParser()
+config.sections()
+config.read('/localDir/conf/fib.conf')
 
 file_name="/var/data/fib"
 #os.remove(file_name)
@@ -22,22 +24,14 @@ file_index=0
 
 ### Setup
 local_high=10
-max_array=10
-max_redis=20
+max_array=int(config['DEFAULT']['max_array'])
+print "max_array:\"",max_array,"\""
 #Connect to redis
 
 rdb = redis.Redis(
    host='master',
    port="6379"
 )
-
-# print "testing rdb"
-# rdb.set('test', 'pass')
-# value = rdb.get('test')
-# print "Value:",value
-# value = rdb.get(1001)
-# print "1001:",value
-
 
 # Function to fill array
 def populate_fib_array ():
