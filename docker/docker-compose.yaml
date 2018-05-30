@@ -1,46 +1,34 @@
 version: "3"
 services:
   python:
-    image: python/devel:latest 
-    command: []
+    image: python/devel:latest
+    command: /bin/bash
     hostname: python
+    tty: True
     volumes:
       - ./../:/localDir/:consistent
-    # environment:
-    #   - NODE_ENV=production
-    #   - RHOST=redis
-#    ports:
-#      - 1235:8000
     networks:
       - redis-net
 
   websrvr:
     image: websrvr/devel:latest
-    command: []
+    command: ./run.sh
     hostname: websrvr
     links:
       - python
+    tty: True
     volumes:
       - ./../:/localDir/:consistent
-    # environment:ping
-    #   - NODE_ENV=production
-    #   - RHOST=redis
-#    ports:
-#      - 1235:8000
     networks:
       - redis-net
 
   redispop:
     image: redispop/devel:latest
-    command: []
-    hostname: dockerPop
+    command: /bin/bash
+    hostname: redispop
+    tty: True
     volumes:
       - ./../:/localDir/:consistent
-    # environment:
-    #   - NODE_ENV=production
-    #   - RHOST=redis
-    # ports:
-    #   - 1235:8000
     networks:
       - redis-net
 

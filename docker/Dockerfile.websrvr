@@ -19,11 +19,13 @@ RUN useradd -m user
 #Create Data dir
 RUN mkdir /var/data; mkdir /var/log/fib
 RUN chown user:user /var/data /var/log/fib
+ADD run.sh /home/user
+RUN cd /home/user; chown user:user /home/user/run.sh; chmod u+x /home/user/run.sh
 
 # User specific settings
 USER user
 WORKDIR /home/user
-
 #CMD export FLASK_APP=/localDir/python/webservice.py
 #CMD cd /localDir/python/ && gunicorn -b 0.0.0.0 -w 1 --keep-alive 10 webservice:app & /bin/bash
-CMD cd /localDir/python && nohup ./start.py >> /var/log/fib/service.log 2>&1 </dev/null & /bin/bash
+#CMD cd /localDir/python && ./start.py >> /var/log/fib/service.log 2>&1 </dev/null & /bin/bash
+CMD ./run.sh
