@@ -1,0 +1,28 @@
+FROM centos:7
+
+#Install packages
+
+#Set root password
+RUN echo "root:password" |chpasswd
+
+#install PIP
+RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+RUN python get-pip.py
+#Install flask
+RUN pip install flask gunicorn
+RUN yum -y install epel-release less python-configparser
+RUN yum -y install redis python-redis bind-utils wget python-configparser
+
+#Create user
+RUN useradd -m user
+
+#Create Data dir
+RUN mkdir /var/data
+RUN chown user:user /var/data
+
+# User specific settings
+USER user
+WORKDIR /home/user
+
+#CMD export FLASK_APP=/localDir/python/webservice.py
+CMD cd /localDir/python/ && gunicorn -b 0.0.0.0 -w 1 --keep-alive 10 webservice:app & /bin/bash

@@ -6,67 +6,137 @@
 #######################
 import json
 import redis
+import threading
+import configparser
+import fcntl
+import time
+import logging
 from flask import Flask
 from flask import request
 from flask import jsonify
 
+config =  configparser.ConfigParser()
+config.sections()
+config.read('/localDir/conf/fib.conf')
+
+file_name="/var/data/fib"
+file_updater=False # This will only be set to true for the thread that is going to update the file
+#os.remove(file_name)
+# Check to see if anybdy has locked this file
+#fib_file=open(file_name, 'w')
+# print "locking file"
+# try :
+#     fcntl.flock(fib_file, fcntl.LOCK_NB)
+# except IOError as e:
+#     print "Did not lock file and that is okay"
+# else:
+#     file_updater=True
+#     print "locked file"
+#
+fib_read=open(file_name, 'r')
+file_index=0
+
 ### Setup
-max_array=1000
-max_redis=10000
+local_high=10
+max_array=int(config['DEFAULT']['max_array'])
+print "max_array:\"",max_array,"\""
 #Connect to redis
 
 rdb = redis.Redis(
-    host='redis',
-    port="6379"
+   host='master',
+   port="6379"
 )
-print "testing rdb"
-rdb.set('test', 'pass')
-value = rdb.get('test')
-print "Value:",value
-value = rdb.get(1001)
-print "1001:",value
+# rdb.set('needed',0)
+# rdb.set('done',0)
+
+def check_needed():
+    print "update running"
+    global local_high
+    #This is going to check to see if we need to update the local cache file
+    running = 1
+    while (running):
+        print "needed".rdb.get("needed")
+        needed=int(rdb.get("needed"))
+        while (local_high < needed):
+            fib_file.write((','+rdb.get(local_high+1)))
+            rdb.set('index_'+str(local_high+1),fib_file.tell())
+            rdb.set('done',local_high)
+            local_high+=1
+
+        time.sleep(3)
 
 
 # Function to fill array
 def populate_fib_array ():
-    print "Populating array"
-    count=2
-    fib_array=[0,1]
-    while count < max_array:
-        fib_array.append(fib_array[count-2]+fib_array[count-1])
-        #print "fib array count is:",fib_array[count]
+    # Changing to file
+    print "Populating array to ",max_array
+    count=1
+    first=0
+    second=1
+    #Bootstrap sequence
+    file_index=fib_file.write(str(first))
+    rdb.set('index_'+str(count),fib_file.tell())
+    file_index=fib_file.write(','+str(second))
+    count+=1
+    rdb.set('index_'+str(count),fib_file.tell())
+    count+=1
+    while count <= max_array:
+        third=first+second
+        current=fib_file.tell()
+        fib_file.write((','+str(third)))
+        rdb.set('index_'+str(count),fib_file.tell())
+        rdb.set('redis_high',str(third))
+        first=second
+        second=third
         count+=1
-    return fib_array
-
-def populate_fib_redis (fib_one, fib_two):
-    print "Populating redis"
-    count=max_array+1
-    while count < max_redis:
-        value=fib_one+fib_two
-        rdb.set(count,value)
-        count+=1
-        fib_one=fib_two
-        fib_two=value
+    fib_file.flush()
     return
 
-def create_output (length, fib_array):
+
+def create_output (length):
     #This is the function that will walk the array and return the array
     #for the given position
-    if length <= max_array:
-        fib_output=fib_array[0:length]
+    global local_high
+    #print "local_high:",local_high
+    if length <= local_high:
+        fib_read.seek(0)
+        fib_output=fib_read.read(int(rdb.get('index_'+str(length))))
     else:
-        print "range",range(max_array+1,length+1,1)
-        fib_output=fib_array
-        fib_output.extend(rdb.mget(range(max_array+1,length+1,1)))
+        # If the length is more than we have in the cache file_name
+        # We need to update the cache file and then return the whole thing.
+        #if length is less then cache file, we updated need if it is less then length
+        # Then we check to see if our index is in redis, once our index is in redid we can do the output
+        #There will be another fuction that will check needed and update the cache as needed.
+        #while (rdb.exists('index_'+str(length)) == 0):
+        while (local_high < length):
+            if(int(rdb.get('needed')) < length):
+                rdb.set('needed',length)
+            elif (local_high < int(rdb.get('done'))):
+                local_high=int(rdb.get('done'))
+            else:
+                time.sleep(5)
+                #check_needed()
+            #fib_file.write((','+rdb.get(local_high+1)))
+            #rdb.set('index_'+str(local_high+1),fib_file.tell())
+            #local_high+=1
+
+        #fib_file.flush()
+        fib_read.seek(0)
+        fib_output=fib_read.read(int(rdb.get('index_'+str(length))))
+        local_high=length
+        #fib_output=fib_read.read()
+        #fib_output.extend(rdb.mget(range(max_array+1,length+1,1)))
     return fib_output
 
+
+########### Main #################
 print "starting service"
-fib_array=populate_fib_array()
+#fib_array=populate_fib_array()
 print "Done filling array"
-#print "10:",create_output(10000, fib_array)
-print "Start filling redis"
-populate_fib_redis(fib_array[-2], fib_array[-1])
-print "redis populated"
+#if(file_updater):
+# update_cache_thread = threading.Thread(target=check_needed, args="")
+# update_cache_thread.daemon = True
+# update_cache_thread.start()
 
 #Building the webservice app
 app = Flask(__name__)
@@ -80,9 +150,10 @@ def hello_world():
         return jsonify(response="error", message="invalid reqeust, reqeust must be an integer")
 
     if (length > 0):
-        if ((length <= max_array) or ((length > max_array) and (rdb.exists(length)))):
-            return  jsonify(response="success",output=create_output(length, fib_array))
+        if ((length <= local_high) or ((length > local_high) and (rdb.exists(length)))):
+            #print "current high",high
+            return  jsonify(response="success",output=create_output(length))
         else:
-                return jsonify(response="error", message="Not calculated yet please try again later")
+            return jsonify(response="error", message="Not calculated yet please try again later")
     else:
             return jsonify(response="error",message="invalid reqeust")

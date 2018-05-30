@@ -1,0 +1,16 @@
+** Done ** Clean up extra print statements
+** Done ** build redis population servers
+have the redis population script check to see what is already in redis
+build test server with script for testing
+** Done ** build shared config file so that servers have correct arrays when they start
+create docs to run full setup and testing
+Walkthrough entire doc to verify it works
+** Done ** remove extra packages from build that are not needed
+Race condition in the file write system.
+  Only one script on the web server can write to the file
+  Docker increment hostname, create index_request_hostname, update file
+** Done ** Need to have a keep alive to the long outputs.
+
+
+############### If there is time  ########################
+Build rpms
