@@ -131,12 +131,6 @@ def create_output (length):
 
 ########### Main #################
 print "starting service"
-#fib_array=populate_fib_array()
-print "Done filling array"
-#if(file_updater):
-# update_cache_thread = threading.Thread(target=check_needed, args="")
-# update_cache_thread.daemon = True
-# update_cache_thread.start()
 
 #Building the webservice app
 app = Flask(__name__)

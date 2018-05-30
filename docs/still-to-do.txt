@@ -10,6 +10,11 @@ Race condition in the file write system.
   Only one script on the web server can write to the file
   Docker increment hostname, create index_request_hostname, update file
 ** Done ** Need to have a keep alive to the long outputs.
+Add logging to the servers 
+
+To run script we need to start redis populator
+then updatecache script
+Then start the web service.
 
 
 ############### If there is time  ########################

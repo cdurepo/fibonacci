@@ -84,7 +84,7 @@ def check_needed():
 print "starting service"
 fib_array=populate_fib_array()
 print "Done filling array"
-check_needed()
+#check_needed()
 # def run_update():
 #     update_cache_thread = threading.Thread(target=check_needed, args="")
 #     update_cache_thread.daemon = True
