@@ -27,8 +27,8 @@ max_array=int(config['DEFAULT']['max_array'])
 #Connect to redis
 
 rdb = redis.Redis(
-   host='master',
-   port="6379"
+   host=config['DEFAULT']['redis_host'],
+   port=config['DEFAULT']['redis_port']
 )
 print "set inital max_update"
 rdb.set("max_update",int(local_high))

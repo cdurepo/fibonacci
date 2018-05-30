@@ -17,8 +17,8 @@ max_redis=int(config['DEFAULT']['max_redis'])
 #Connect to redis
 
 rdb = redis.Redis(
-   host='master',
-   port="6379"
+   host=config['DEFAULT']['redis_host'],
+   port=config['DEFAULT']['redis_port']
 )
 
 print "testing rdb"

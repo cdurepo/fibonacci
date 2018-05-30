@@ -43,8 +43,8 @@ print "max_array:\"",max_array,"\""
 #Connect to redis
 
 rdb = redis.Redis(
-   host='master',
-   port="6379"
+   host=config['DEFAULT']['redis_host'],
+   port=config['DEFAULT']['redis_port']
 )
 # rdb.set('needed',0)
 # rdb.set('done',0)
