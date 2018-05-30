@@ -1,16 +1,16 @@
 version: "3"
 services:
   python:
-    image: python/devel:latest
+    image: python/devel:latest 
     command: []
-    hostname: devel
+    hostname: python
     volumes:
       - ./../:/localDir/:consistent
-    environment:
-      - NODE_ENV=production
-      - RHOST=redis
-    ports:
-      - 1235:3000
+    # environment:
+    #   - NODE_ENV=production
+    #   - RHOST=redis
+#    ports:
+#      - 1235:8000
     networks:
       - redis-net
 
@@ -18,13 +18,15 @@ services:
     image: websrvr/devel:latest
     command: []
     hostname: websrvr
+    links:
+      - python
     volumes:
       - ./../:/localDir/:consistent
-    environment:
-      - NODE_ENV=production
-      - RHOST=redis
-    ports:
-      - 1235:3000
+    # environment:ping
+    #   - NODE_ENV=production
+    #   - RHOST=redis
+#    ports:
+#      - 1235:8000
     networks:
       - redis-net
 
@@ -34,11 +36,11 @@ services:
     hostname: dockerPop
     volumes:
       - ./../:/localDir/:consistent
-    environment:
-      - NODE_ENV=production
-      - RHOST=redis
-    ports:
-      - 1235:3000
+    # environment:
+    #   - NODE_ENV=production
+    #   - RHOST=redis
+    # ports:
+    #   - 1235:8000
     networks:
       - redis-net
 

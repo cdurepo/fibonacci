@@ -76,7 +76,7 @@ def check_needed():
             rdb.set('done',local_high+1)
             local_high+=1
             fib_file.flush()
-        time.sleep(3)
+        time.sleep(2)
 
 
 
@@ -84,20 +84,3 @@ def check_needed():
 print "starting service"
 fib_array=populate_fib_array()
 print "Done filling array"
-#check_needed()
-# def run_update():
-#     update_cache_thread = threading.Thread(target=check_needed, args="")
-#     update_cache_thread.daemon = True
-#     update_cache_thread.start()
-# run_update()
-## We need to check of our high is less the reqeust on redis
-## If it is lower we run the update, if not we sleep another three
-# running =1
-# while running >0:
-#     #print "checking max_update"
-#     #print "max_update is",rdb.get("max_update")
-#     if (local_high < int(rdb.get("max_update"))):
-#         #print "need to update to ",rdb.get("max_update")
-#         update_fib_array(rdb.get("max_update"))
-#     else:
-#         time.sleep(3)

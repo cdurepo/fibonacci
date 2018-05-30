@@ -63,7 +63,7 @@ def check_needed():
             rdb.set('done',local_high)
             local_high+=1
 
-        time.sleep(3)
+        time.sleep(1)
 
 
 # Function to fill array

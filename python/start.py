@@ -15,11 +15,14 @@ import os
 # Get config info
 
 print "Loading Config"
+
 config =  configparser.ConfigParser()
 config.sections()
 config.read('/localDir/conf/fib.conf')
-log_file=config['DEFAULT']['logging_dir'],config['DEFAULT']['log_file']
+log_file=str(config['DEFAULT']['logging_dir'])+str(config['DEFAULT']['log_file'])
+print "log_file",str(log_file)
 logging.basicConfig(filename=log_file,level=logging.DEBUG)
+
 max_redis=int(config['DEFAULT']['max_redis'])
 print "Config loaded"
 
