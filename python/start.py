@@ -3,7 +3,7 @@
 # This is going to be the start script for the fib server.
 # It should be the single interface to start all the scripts needed to work.
 ##########
-#import logging
+import logging
 import json
 import redis
 import threading
@@ -18,6 +18,8 @@ print "Loading Config"
 config =  configparser.ConfigParser()
 config.sections()
 config.read('/localDir/conf/fib.conf')
+log_file=config['DEFAULT']['logging_dir'],config['DEFAULT']['log_file']
+logging.basicConfig(filename=log_file,level=logging.DEBUG)
 max_redis=int(config['DEFAULT']['max_redis'])
 print "Config loaded"
 
@@ -37,6 +39,6 @@ update_cache_thread.start()
 
 print "Starting Service"
 # Now we need to start the gunicor service.
-cmd ="gunicorn -b 0.0.0.0 -w 1 --keep-alive 10 webservice:app &"
+cmd ="gunicorn -b 0.0.0.0 -w 1 --keep-alive 10 webservice:app"
 return_value = os.system(cmd)
 print ('return_value:', return_value)
