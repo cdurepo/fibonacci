@@ -10,7 +10,7 @@ Redis cluster provided by:
 https://github.com/mustafaileri/redis-cluster-with-sentinel
 
 ## Design
-The web service uses a local cache file to serve the sequence of numbers.  A small initial file is created.  At the same time another server is doing calculations to populate the redis array with a much larger series of numbers.  When a call is made to the web service it looks to see if if the value needed is in the local cache, if it is not it looks to see if redis has the requests value.  If redis has the value the local cache is updated and the response is sent back with the request. 
+The web service uses a local cache file to serve the sequence of numbers.  A small initial file is created.  At the same time another server is doing calculations to populate the redis array with a much larger series of numbers.  When a call is made to the web service it looks to see if if the value needed is in the local cache, if it is not it looks to see if redis has the requests value.  If redis has the value the local cache is updated and the response is sent back with the request.
 
 These are the parts of the service
 
@@ -71,4 +71,14 @@ The second will connect to redis, update the cache file, and then return results
 ```
 curl http://websrvr:8000/?fib=10
 curl http://websrvr:8000/?fib=20
+curl http://websrvr:8000/?fib=3000
 ```
+If you want to increase the number of servers you can running
+```
+docker-compose scale sentinel=3
+docker-compose scale slave=3
+docker-compose scale websrvr=3
+```
+This will raise the number of each by 3 giving you nice redundancy.
+The web servers are balanced via DNS but a more load balancer could be use.  
+You can also scale down the number of servers. The value you give is the total number of servers of that kind so Docker will start or stop the number of servers need to reach it.
