@@ -4,12 +4,13 @@
 ## Summary
 This is a service that will work as a RestAPI to deliver the Fibonacci numbers to the requested depth.  
 It uses a reds server to store the numbers and a local file to cache what is needed.  You are able to scale the
-redis and web servers as you need to deliver to your requirements. The redis servers are in a cluster that is monitored by sentinel.  If a redis server goes down a a new one will be started and added to the cluster.   
+redis and web servers as you need to deliver to your requirements. The redis servers are in a cluster that is monitored by sentinel.  If a redis server goes down a a new one will be started and added to the cluster.
 
 Redis cluster provided by:
 https://github.com/mustafaileri/redis-cluster-with-sentinel
 
-
+## Design
+The web service uses a local cache file to serve the sequence of numbers.  A small initial file is created.  At the same time another server is doing calculations to populate the redis array with a much larger series of numbers.  When a call is made to the web service it looks to see if if the value needed is in the local cache, if it is not it looks to see if redis has the requests value.  If redis has the value the local cache is updated and the response is sent back with the request. 
 
 These are the parts of the service
 
@@ -44,11 +45,6 @@ Again from inside the docker directory run
 docker-compose ps
 ```
 You should see
-```
-Name                     command                State     Ports
---------------------------------------------------------------------
-docker_master_1     docker-entrypoint.sh redis ...   Up      6379/tcp
-```
 ```
 Name                     Command               State    Ports  
 ---------------------------------------------------------------------
