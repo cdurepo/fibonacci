@@ -1,5 +1,5 @@
 # fibonacci
-** Web Service to return numbers in order in the Fibonacci sequence **
+**Web Service to return numbers in order in the Fibonacci sequence**
 
 ## Summary
 This is a service that will work as a RestAPI to deliver the Fibonacci numbers to the requested depth.  
@@ -79,9 +79,8 @@ If you run these commands you should errors
 curl http://websrvr:8000/?fib=b
 curl http://websrvr:8000/?fib=0
 ```
-If you run these commands you should get a warning
+If you run this command you should get a warning
 ```
-curl http://websrvr:8000/?fib=0
 curl http://websrvr:8000/?fib=10001
 ```
 If you want to increase the number of servers you can running
@@ -90,8 +89,8 @@ docker-compose scale sentinel=3
 docker-compose scale slave=3
 docker-compose scale websrvr=3
 ```
-This will raise the number of each by 3 giving you nice redundancy.
-The web servers are balanced via DNS but a more load balancer could be use.  
+This will make the total number of each 3 giving you nice redundancy.
+The web servers are balanced via DNS but a more advanced load balancer could be use.  
 You can also scale down the number of servers. The value you give is the total number of servers of that kind so Docker will start or stop the number of servers need to reach it.
 
 When you are done you can just run this to shut everything down
