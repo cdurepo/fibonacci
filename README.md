@@ -124,3 +124,4 @@ The docker process has only been tested on a Mac as that is the only server I ha
 * Make redispop recover and continue where it left off
 * Test with other hardware
 * Make rpm's and eggs for people that don't want to deploy with docker
+* Improve logging and logging options
