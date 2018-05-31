@@ -125,3 +125,4 @@ The docker process has only been tested on a Mac as that is the only server I ha
 * Test with other hardware
 * Make rpm's and eggs for people that don't want to deploy with docker
 * Improve logging and logging options
+* Build a full test server to verify builds

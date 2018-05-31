@@ -70,7 +70,7 @@ def check_needed():
     running = 1
     while (running):
         needed=int(rdb.get("needed"))
-        while (local_high <= needed):
+        while (local_high < needed):
             fib_file.write((','+rdb.get(local_high+1)))
             rdb.set('index_'+str(local_high+1),fib_file.tell())
             rdb.set('done',local_high+1)
