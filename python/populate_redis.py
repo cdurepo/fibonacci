@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #######################
-# this is going to be the web service that will recive and respond to, the
-# reqeust for a numbeer of fib
+# This is the process that will populate the redis array with the fibonacci
+# sequence. 
 # Created by Chris Durepo May 22 2018
 #######################
 import json
