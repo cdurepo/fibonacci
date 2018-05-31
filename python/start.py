@@ -35,6 +35,6 @@ update_cache_thread.start()
 
 print "Starting Service"
 # Now we need to start the gunicor service.
-cmd ="gunicorn -b 0.0.0.0 -w 1 --keep-alive 10 webservice:app"
+cmd ="gunicorn -b 0.0.0.0 -w 1 --keep-alive 10 webservice:app 2&>1 >> /var/log/fib/server.log"
 return_value = os.system(cmd)
 print ('return_value:', return_value)

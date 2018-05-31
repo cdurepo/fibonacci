@@ -82,3 +82,15 @@ docker-compose scale websrvr=3
 This will raise the number of each by 3 giving you nice redundancy.
 The web servers are balanced via DNS but a more load balancer could be use.  
 You can also scale down the number of servers. The value you give is the total number of servers of that kind so Docker will start or stop the number of servers need to reach it.
+
+## Limits
+I have tested this on my older laptop to over 40,000 places.  However after that it starts to have issues.  The only real limit on it should be hardware.  Python can handle the large integers with out issue, redis will be fine as long as you keep adding servers.  Basically once you decide what your requirements are, as long as you can supply enough hardware it should work.
+
+## Troubleshooting
+* Web Server not responding.  
+  Reboot the web server.  Because of the way the cache file is created it is just best to take the host down and replace it with another one.
+* Redis host went down
+  Sentinal will redeploy a redis host if one dies.  
+* Redis Pop server went down.
+  Check the max_redis value on redis, if it is where you want it, just leave the server down.  If you restart it, it will rebuild the DB from 0 so it is not worth it unless you really need to increase the count.
+   
