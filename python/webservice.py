@@ -21,18 +21,7 @@ config.read('/localDir/conf/fib.conf')
 
 file_name="/var/data/fib"
 file_updater=False # This will only be set to true for the thread that is going to update the file
-#os.remove(file_name)
-# Check to see if anybdy has locked this file
-#fib_file=open(file_name, 'w')
-# print "locking file"
-# try :
-#     fcntl.flock(fib_file, fcntl.LOCK_NB)
-# except IOError as e:
-#     print "Did not lock file and that is okay"
-# else:
-#     file_updater=True
-#     print "locked file"
-#
+
 fib_read=open(file_name, 'r')
 file_index=0
 
@@ -114,7 +103,7 @@ def create_output (length):
             elif (local_high < int(rdb.get('done'))):
                 local_high=int(rdb.get('done'))
             else:
-                time.sleep(5)
+                time.sleep(.5)
                 #check_needed()
             #fib_file.write((','+rdb.get(local_high+1)))
             #rdb.set('index_'+str(local_high+1),fib_file.tell())

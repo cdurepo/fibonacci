@@ -26,13 +26,6 @@ logging.basicConfig(filename=log_file,level=logging.DEBUG)
 max_redis=int(config['DEFAULT']['max_redis'])
 print "Config loaded"
 
-print "Starting redis population"
-#### Start redis population
-import populate_redis
-update_cache_thread = threading.Thread(target=populate_redis.populate_fib_redis, args="")
-update_cache_thread.daemon = True
-update_cache_thread.start()
-
 
 print "Starting local cache file"
 ## Start the local cache file_updater
