@@ -110,6 +110,8 @@ There is a file in the repo call fib.conf, this is used by a number of the serve
 ## Limits
 I have tested this on my older laptop to over 40,000 places.  However after that it starts to have issues.  The only real limit on it should be hardware.  Python can handle the large integers without issue, redis will be fine as long as you keep adding servers.  Basically once you decide what your requirements are, as long as you can supply enough hardware it should work.
 
+The docker process has only been tested on a Mac as that is the only server I have to test with.  I assume it would work with other types but I have no way of verifyting.
+
 ## Troubleshooting
 * Web Server not responding.  
   Reboot the web server.  Because of the way the cache file is created it is just best to take the host down and replace it with another one.
@@ -117,3 +119,8 @@ I have tested this on my older laptop to over 40,000 places.  However after that
   Sentinal will redeploy a redis host if one dies.  
 * Redis Pop server went down.
   Check the max_redis value on redis, if it is where you want it, just leave the server down.  If you restart it, it will rebuild the DB from 0 so it is not worth it unless you really need to increase the count.
+
+## Future progress
+* Make redispop recover and continue where it left off
+* Test with other hardware
+* Make rpm's and eggs for people that don't want to deploy with docker
