@@ -24,7 +24,7 @@ services:
 
   redispop:
     image: redispop/devel:latest
-    command: /bin/bash
+    command: /localDir/python/populate_redis.py
     hostname: redispop
     tty: True
     volumes:

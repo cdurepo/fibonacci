@@ -65,6 +65,7 @@ Use the container ID for the image named docker_python_1
 ```
 docker exec -it <container id> /bin/bash
 ```
+## Testing
 Verify the web service is running.
 The first command will give results via the cache file
 The second will connect to redis, update the cache file, and then return results.
@@ -72,6 +73,16 @@ The second will connect to redis, update the cache file, and then return results
 curl http://websrvr:8000/?fib=10
 curl http://websrvr:8000/?fib=20
 curl http://websrvr:8000/?fib=3000
+```
+If you run these commands you should errors
+```
+curl http://websrvr:8000/?fib=b
+curl http://websrvr:8000/?fib=0
+```
+If you run these commands you should get a warning
+```
+curl http://websrvr:8000/?fib=0
+curl http://websrvr:8000/?fib=10001
 ```
 If you want to increase the number of servers you can running
 ```
@@ -83,8 +94,21 @@ This will raise the number of each by 3 giving you nice redundancy.
 The web servers are balanced via DNS but a more load balancer could be use.  
 You can also scale down the number of servers. The value you give is the total number of servers of that kind so Docker will start or stop the number of servers need to reach it.
 
+When you are done you can just run this to shut everything down
+```
+docker-compose down
+```
+## Configuration
+There is a file in the repo call fib.conf, this is used by a number of the servers to setup the environment.
+
+* Max array -- The max local array on boot
+* Max redis  -- The max redis will be populated
+* Log Dir and Log file are only for the web server
+* Redis host and port  -- hostname or address of the redis server
+* Workers -- number of threads for each web server
+
 ## Limits
-I have tested this on my older laptop to over 40,000 places.  However after that it starts to have issues.  The only real limit on it should be hardware.  Python can handle the large integers with out issue, redis will be fine as long as you keep adding servers.  Basically once you decide what your requirements are, as long as you can supply enough hardware it should work.
+I have tested this on my older laptop to over 40,000 places.  However after that it starts to have issues.  The only real limit on it should be hardware.  Python can handle the large integers without issue, redis will be fine as long as you keep adding servers.  Basically once you decide what your requirements are, as long as you can supply enough hardware it should work.
 
 ## Troubleshooting
 * Web Server not responding.  
@@ -93,4 +117,3 @@ I have tested this on my older laptop to over 40,000 places.  However after that
   Sentinal will redeploy a redis host if one dies.  
 * Redis Pop server went down.
   Check the max_redis value on redis, if it is where you want it, just leave the server down.  If you restart it, it will rebuild the DB from 0 so it is not worth it unless you really need to increase the count.
-   
