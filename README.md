@@ -83,14 +83,14 @@ If you run this command you should get a warning
 ```
 curl http://websrvr:8000/?fib=10001
 ```
-If you want to increase the number of servers you can running
+If you want to increase the number of servers you are running
 ```
 docker-compose scale sentinel=3
 docker-compose scale slave=3
 docker-compose scale websrvr=3
 ```
 This will make the total number of each 3 giving you nice redundancy.
-The web servers are balanced via DNS but a more advanced load balancer could be use.  
+The web servers are balanced via DNS but a more advanced load balancer should be use.  
 You can also scale down the number of servers. The value you give is the total number of servers of that kind so Docker will start or stop the number of servers need to reach it.
 
 When you are done you can just run this to shut everything down
