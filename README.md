@@ -74,7 +74,7 @@ curl http://websrvr:8000/?fib=10
 curl http://websrvr:8000/?fib=20
 curl http://websrvr:8000/?fib=3000
 ```
-If you run these commands you should errors
+If you run these commands you should get errors
 ```
 curl http://websrvr:8000/?fib=b
 curl http://websrvr:8000/?fib=0
