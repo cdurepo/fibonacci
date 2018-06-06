@@ -23,7 +23,7 @@ These are the parts of the service
 ## Installation
 
 Build and start services
-From inside the repo run
+from inside the repo run:
 ```
 docker build docker -f docker/Dockerfile.redispop --rm -t redispop/devel
 ```
@@ -40,7 +40,7 @@ cd docker
 docker-compose up --build
 ```
 Leave that running and in a new tab verify the servers are up.
-Again from inside the docker directory run
+Again from inside the docker directory run:
 ```
 docker-compose ps
 ```
@@ -98,7 +98,7 @@ When you are done you can just run this to shut everything down
 docker-compose down
 ```
 ## Configuration
-There is a file in the repo call fib.conf, this is used by a number of the servers to setup the environment.
+There is a file inside the repo conf directory called fib.conf, this is used by a number of the servers to setup the environment.
 
 * Max array -- The max local array on boot
 * Max redis  -- The max redis will be populated
